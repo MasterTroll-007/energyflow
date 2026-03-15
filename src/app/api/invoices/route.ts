@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { INVOICE_STATUSES } from "@/lib/constants";
+
+const VALID_INVOICE_STATUSES = Object.keys(INVOICE_STATUSES);
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +11,15 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
 
     const where: Record<string, unknown> = {};
-    if (status) where.status = status;
+    if (status) {
+      if (!VALID_INVOICE_STATUSES.includes(status)) {
+        return NextResponse.json(
+          { error: `Neplatný status faktury. Povolené hodnoty: ${VALID_INVOICE_STATUSES.join(", ")}` },
+          { status: 400 }
+        );
+      }
+      where.status = status;
+    }
     if (search) {
       where.OR = [
         { invoiceNumber: { contains: search } },

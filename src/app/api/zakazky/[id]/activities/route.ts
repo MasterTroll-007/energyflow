@@ -1,6 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const activities = await prisma.activity.findMany({
+      where: { zakazkaId: id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(activities);
+  } catch (error) {
+    console.error("Activities GET error:", error);
+    return NextResponse.json({ error: "Chyba při načítání aktivit" }, { status: 500 });
+  }
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
