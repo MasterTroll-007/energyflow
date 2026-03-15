@@ -1,13 +1,123 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  ico         String?
+  companyName String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  zakazky  Zakazka[]
+  invoices Invoice[]
+}
+
+model Zakazka {
+  id        String   @id @default(uuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  address   String
+  type      String   // PENB, EA, EP
+  status    String   @default("nova") // nova, v_reseni, ceka_na_podklady, dokoncena, fakturovana
+  price     Float?
+  deadline  DateTime?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  penb       Penb?
+  documents  Document[]
+  activities Activity[]
+  invoices   Invoice[]
+}
+
+model Penb {
+  id              String   @id @default(uuid())
+  zakazkaId       String   @unique
+  zakazka         Zakazka  @relation(fields: [zakazkaId], references: [id], onDelete: Cascade)
+  certificateNumber String
+  buildingAddress String
+  energyClass     String   // A-G
+  issueDate       DateTime
+  expiryDate      DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  zakazkaId String
+  zakazka   Zakazka  @relation(fields: [zakazkaId], references: [id], onDelete: Cascade)
+  name      String
+  fileName  String
+  fileSize  Int
+  category  String   // podklady, vystupy, faktury
+  createdAt DateTime @default(now())
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  zakazkaId String
+  zakazka   Zakazka  @relation(fields: [zakazkaId], references: [id], onDelete: Cascade)
+  type      String   // status_change, note, document_upload, invoice_created
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id            String   @id @default(uuid())
+  invoiceNumber String   @unique
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  zakazkaId     String?
+  zakazka       Zakazka? @relation(fields: [zakazkaId], references: [id], onDelete: SetNull)
+  issueDate     DateTime @default(now())
+  dueDate       DateTime
+  status        String   @default("nezaplaceno") // nezaplaceno, zaplaceno
+  totalAmount   Float
+  items         InvoiceItem[]
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model InvoiceItem {
+  id          String  @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Float
+  unitPrice   Float
+  total       Float
+}
+
+model CompanySettings {
+  id          String  @id @default("default")
+  companyName String  @default("")
+  ico         String  @default("")
+  dic         String  @default("")
+  address     String  @default("")
+  email       String  @default("")
+  phone       String  @default("")
+  bankAccount String  @default("")
+  logoUrl     String?
+}
+
+model DefaultPrice {
+  id          String @id @default(uuid())
+  serviceName String
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
