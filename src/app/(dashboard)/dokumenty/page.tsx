@@ -94,7 +94,12 @@ export default function DokumentyPage() {
       <div className="flex gap-3">
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="Kategorie" />
+            <SelectValue placeholder="Kategorie">
+              {(value: string) => {
+                if (!value || value === "all") return "Všechny kategorie";
+                return DOCUMENT_CATEGORIES[value as keyof typeof DOCUMENT_CATEGORIES] ?? value;
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Všechny kategorie</SelectItem>

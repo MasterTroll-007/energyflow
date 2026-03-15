@@ -143,7 +143,12 @@ export default function FakturyPage() {
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder="Status">
+              {(value: string) => {
+                if (!value || value === "all") return "Všechny";
+                return INVOICE_STATUSES[value as keyof typeof INVOICE_STATUSES]?.label ?? value;
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Všechny</SelectItem>

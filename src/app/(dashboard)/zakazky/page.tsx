@@ -111,7 +111,12 @@ export default function ZakazkyPage() {
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="Filtr statusu" />
+            <SelectValue placeholder="Filtr statusu">
+              {(value: string) => {
+                if (!value || value === "all") return "Všechny statusy";
+                return ZAKAZKA_STATUSES[value as keyof typeof ZAKAZKA_STATUSES]?.label ?? value;
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Všechny statusy</SelectItem>
