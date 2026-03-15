@@ -371,7 +371,9 @@ export default function ZakazkaDetailPage({
         <div className="flex items-center gap-2">
           <Select value={zakazka.status} onValueChange={handleStatusChange}>
             <SelectTrigger className="w-44">
-              <SelectValue />
+              <SelectValue>
+                {(value: string) => ZAKAZKA_STATUSES[value as keyof typeof ZAKAZKA_STATUSES]?.label ?? value}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {Object.entries(ZAKAZKA_STATUSES).map(([key, { label }]) => (
@@ -520,7 +522,9 @@ export default function ZakazkaDetailPage({
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue>
+                          {(value: string) => `Třída ${value}`}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {ENERGY_CLASSES.map((c) => (
@@ -692,7 +696,9 @@ export default function ZakazkaDetailPage({
                         onValueChange={setUploadCategory}
                       >
                         <SelectTrigger>
-                          <SelectValue />
+                          <SelectValue>
+                            {(value: string) => DOCUMENT_CATEGORIES[value as keyof typeof DOCUMENT_CATEGORIES] ?? value}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {Object.entries(DOCUMENT_CATEGORIES).map(

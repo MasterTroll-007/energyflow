@@ -112,7 +112,12 @@ export function ZakazkaForm({ initialData, preselectedClientId }: ZakazkaFormPro
                 onValueChange={(v) => setFormData({ ...formData, clientId: v })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Vyberte klienta" />
+                  <SelectValue placeholder="Vyberte klienta">
+                    {(value: string) => {
+                      const c = clients.find((cl) => cl.id === value);
+                      return c ? `${c.name}${c.companyName ? ` (${c.companyName})` : ""}` : "Vyberte klienta";
+                    }}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {clients.map((c) => (
@@ -131,7 +136,9 @@ export function ZakazkaForm({ initialData, preselectedClientId }: ZakazkaFormPro
                 onValueChange={(v) => setFormData({ ...formData, type: v })}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue>
+                    {(value: string) => ZAKAZKA_TYPES[value as keyof typeof ZAKAZKA_TYPES] ?? value}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(ZAKAZKA_TYPES).map(([key, label]) => (
@@ -165,7 +172,9 @@ export function ZakazkaForm({ initialData, preselectedClientId }: ZakazkaFormPro
                 onValueChange={(v) => setFormData({ ...formData, status: v })}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue>
+                    {(value: string) => ZAKAZKA_STATUSES[value as keyof typeof ZAKAZKA_STATUSES]?.label ?? value}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(ZAKAZKA_STATUSES).map(([key, { label }]) => (

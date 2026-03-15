@@ -200,7 +200,12 @@ export function NovaFakturaForm() {
                   <Label>Klient *</Label>
                   <Select value={clientId} onValueChange={setClientId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Vyberte klienta" />
+                      <SelectValue placeholder="Vyberte klienta">
+                        {(value: string) => {
+                          const c = clients.find((cl) => cl.id === value);
+                          return c ? `${c.name}${c.companyName ? ` (${c.companyName})` : ""}` : "Vyberte klienta";
+                        }}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {clients.map((c) => (
@@ -220,7 +225,12 @@ export function NovaFakturaForm() {
                     disabled={!clientId}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Vyberte zakázku" />
+                      <SelectValue placeholder="Vyberte zakázku">
+                        {(value: string) => {
+                          const z = zakazky.find((zk) => zk.id === value);
+                          return z ? `${z.address} (${z.type})` : "Vyberte zakázku";
+                        }}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {zakazky.map((z) => (
@@ -274,7 +284,12 @@ export function NovaFakturaForm() {
                               onValueChange={(v) => applyDefaultPrice(index, v)}
                             >
                               <SelectTrigger className="w-40">
-                                <SelectValue placeholder="Z ceníku" />
+                                <SelectValue placeholder="Z ceníku">
+                                  {(value: string) => {
+                                    const dp = defaultPrices.find((p) => p.id === value);
+                                    return dp ? dp.serviceName : "Z ceníku";
+                                  }}
+                                </SelectValue>
                               </SelectTrigger>
                               <SelectContent>
                                 {defaultPrices.map((dp) => (
